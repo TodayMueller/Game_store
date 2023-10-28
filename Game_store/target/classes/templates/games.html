@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"> 
+    <head>
+
+        <meta charset="utf-8"></meta>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
+
+        <meta name="_csrf" content="${_csrf.token}" th:content="${_csrf.token}"/>
+        <meta name="_csrf_header" content="${_csrf.parameterName}" th:content="${_csrf.parameterName}"/>
+
+        <title>Games in our store</title>
+
+        <link href="css/bootstrap.min.css" rel="stylesheet"></link>
+
+        <script src="js/jquery-1.9.1.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/angular-1.7.5.min.js"></script>
+        <script src="js/games.js"></script>
+
+    </head>
+    <body ng-app="games" ng-controller="GamesController">
+        
+        <div sec:authorize="isAnonymous()" >
+            <h1><a href="/login">Login</a></h1>
+        </div>
+
+        <div sec:authorize="isAuthenticated()">     
+            <form name="logoutForm" th:action="@{/logout}" method="post">
+                <input type="submit"  class="btn btn-primary" value="Sign Out"/>
+            </form>
+        </div>
+        
+        <h1>Магазин компьютерных игр</h1>
+
+        <div ng-controller="getGames" ng-show="gamesList.length > 0">
+            <table id="gamesTable" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th><h2>Название</h2></th>
+                        <th><h2>Год выхода</h2></th>
+                        <th><h2>Разработчик</h2></th>
+                        <th><h2>Цена</h2></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="game in gamesList" id="{{game.id}}">
+                        <td>{{game.name}}</td>
+                        <td>{{game.year}}</td>
+                        <td>{{game.developer}}</td>
+                        <td>{{game.price}}</td>
+                        <td><!--<input type="button" value="Редактировать"/>--></td>
+                        <td><input type="button" value="Удалить" ng-click="deleteGame(game.id)"/></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="alert alert-danger" role="alert" ng-show="errormessage">{{errormessage}}</div>
+
+        <div>
+            <form role="form" ng-submit="addGame()">
+                <div class="form-group">
+                    <label for="inputname">Название</label>
+                    <input type="text" class="form-control" id="inputname" name="inputname" ng-model="inputname" placeholder="Название"></input>
+                </div>   
+                <div class="form-group">
+                    <label for="inputyear">Год</label>
+                    <input type="number" class="form-control" id="inputyear" name="inputyear"  placeholder="Год" ng-model="inputyear"> </input>
+                </div>
+                <div class="form-group">
+                    <label for="inputdeveloper">Разработчик</label>
+                    <input type="text" class="form-control" id="inputdeveloper" name="inputdeveloper" ng-model="inputdeveloper" placeholder="Разработчик"></input>
+                </div> 
+                <div class="form-group">
+                    <label for="inputprice">Цена</label>
+                    <input type="number" class="form-control" id="inputprice" name="inputprice"  placeholder="Цена" ng-model="inputprice"> </input>
+                </div>
+                <button type="submit" class="btn btn-default">Добавить</button>
+            </form>
+        </div>
+    </body>
+</html>
